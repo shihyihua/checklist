@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今天，也把自己照顧好</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #E7E0D4;
+    --surface: #F5F0E6;
+    --surface-border: #DBCFBC;
+    --text: #47403A;
+    --text-soft: #948777;
+    --morning: #96A97E;
+    --morning-deep: #6F805A;
+    --morning-soft: #E3E7D6;
+    --noon: #C08D74;
+    --noon-deep: #9C6A52;
+    --noon-soft: #EEDDD0;
+    --evening: #7E93A6;
+    --evening-deep: #5B7286;
+    --evening-soft: #DEE6EA;
+    --shadow: rgba(71,64,58,0.10);
+  }
+
+  *{ box-sizing: border-box; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    background-image: radial-gradient(circle at 15% 8%, rgba(255,255,255,0.35), transparent 45%),
+                       radial-gradient(circle at 85% 92%, rgba(255,255,255,0.25), transparent 40%);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    padding: 32px 18px 64px;
+  }
+
+  .page{
+    max-width: 520px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: settle 0.6s ease-out forwards;
+  }
+
+  @keyframes settle{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    text-align:center;
+    padding: 6px 6px 28px;
+  }
+  .hero .date{
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--text-soft);
+    margin: 0 0 10px;
+  }
+  .hero h1{
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.5;
+    margin: 0 0 26px;
+    color: var(--text);
+  }
+
+  .ring-wrap{
+    position: relative;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto;
+  }
+  .ring-wrap svg{ width:100%; height:100%; transform: rotate(-90deg); }
+  .ring-track{ fill:none; stroke: var(--surface-border); stroke-width: 8; }
+  .ring-progress{
+    fill:none;
+    stroke: var(--morning-deep);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s ease, stroke 0.5s ease;
+  }
+  .ring-label{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .ring-label .pct{ font-family:'Noto Serif TC',serif; font-size: 44px; font-weight:700; line-height:1; }
+  .ring-label .pct span{ font-size: 22px; font-weight:600; }
+  .ring-label .of{ font-size: 12.5px; color: var(--text-soft); margin-top:6px; }
+
+  /* ---------- Section blocks ---------- */
+  .block{
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 18px;
+    padding: 20px 20px 8px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .block::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:5px;
+  }
+  .block[data-period="morning"]::before{ background: var(--morning); }
+  .block[data-period="noon"]::before{ background: var(--noon); }
+  .block[data-period="evening"]::before{ background: var(--evening); }
+
+  .block-head{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .block-head-left{ display:flex; align-items:center; gap:12px; }
+  .block-icon{
+    width: 36px; height:36px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .block[data-period="morning"] .block-icon{ background: var(--morning-soft); color: var(--morning-deep); }
+  .block[data-period="noon"] .block-icon{ background: var(--noon-soft); color: var(--noon-deep); }
+  .block[data-period="evening"] .block-icon{ background: var(--evening-soft); color: var(--evening-deep); }
+  .block-icon svg{ width:18px; height:18px; }
+
+  .block-head h2{
+    font-family:'Noto Serif TC', serif;
+    font-weight:600;
+    font-size: 18px;
+    margin:0;
+  }
+  .block-head .period-tag{
+    font-size: 12px;
+    color: var(--text-soft);
+    display:block;
+    margin-top: 1px;
+  }
+
+  .pill-toggle{
+    display:flex; align-items:center; gap:6px;
+    border: none;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-family:'Noto Sans TC',sans-serif;
+    cursor:pointer;
+    flex-shrink:0;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .pill-toggle svg{ width:14px; height:14px; }
+  .pill-toggle.noon{ background: var(--noon-soft); color: var(--noon-deep); }
+  .pill-toggle.noon.active{ background: var(--noon-deep); color:#fff; }
+  .pill-toggle.evening{ background: var(--evening-soft); color: var(--evening-deep); }
+  .pill-toggle.evening.active{ background: var(--evening-deep); color:#fff; }
+
+  .checklist{ list-style:none; margin:0; padding:0; }
+  .checklist li{ border-top: 1px solid var(--surface-border); }
+  .checklist li:first-child{ border-top:none; }
+
+  .item-label{
+    display:flex;
+    align-items:flex-start;
+    gap: 12px;
+    padding: 13px 2px;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .item-label input{ position:absolute; opacity:0; width:0; height:0; }
+
+  .box{
+    width: 22px; height:22px;
+    border-radius: 50%;
+    border: 1.8px solid var(--surface-border);
+    flex-shrink:0;
+    margin-top: 1px;
+    display:flex; align-items:center; justify-content:center;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+    background: #fff;
+  }
+  .box svg{
+    width:12px; height:12px;
+    opacity:0;
+    transform: scale(0.5);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .block[data-period="morning"] input:checked + .box{ background: var(--morning); border-color: var(--morning); }
+  .block[data-period="noon"] input:checked + .box{ background: var(--noon); border-color: var(--noon); }
+  .block[data-period="evening"] input:checked + .box{ background: var(--evening); border-color: var(--evening); }
+  input:checked + .box svg{ opacity:1; transform: scale(1); }
+  .item-label:active .box{ transform: scale(0.9); }
+
+  .item-text{ font-size: 15.5px; line-height:1.5; padding-top: 1px; transition: color 0.2s ease; }
+  .item-label.is-disabled{ cursor: not-allowed; opacity: 0.55; }
+  input:checked ~ .item-text{ color: var(--text-soft); }
+  .item-text.skip-line{ text-decoration: line-through; text-decoration-color: var(--surface-border); }
+
+  .item-row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .item-row .item-label{ flex:1; min-width:0; }
+  .pill-toggle.inline{ flex-shrink:0; }
+
+  .idea-toggle.nested{ padding-left: 34px; margin-top: -6px; }
+  .idea-panel.nested{ margin-left: 34px; }
+  .exercise-extra{ padding-bottom: 4px; }
+
+  /* ---------- idea toggle (shared: lunch + exercise) ---------- */
+  .idea-toggle{
+    display:inline-flex; align-items:center; gap:5px;
+    background:none; border:none; padding: 4px 0 12px 2px;
+    font-size: 13px; cursor:pointer;
+    font-family:'Noto Sans TC',sans-serif;
+  }
+  .idea-toggle.noon{ color: var(--noon-deep); }
+  .idea-toggle.evening{ color: var(--evening-deep); }
+  .idea-toggle svg{ width:11px; height:11px; transition: transform 0.2s ease; }
+  .idea-toggle[aria-expanded="true"] svg{ transform: rotate(180deg); }
+
+  .idea-panel{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height 0.35s ease;
+    margin: 0 0 4px 2px;
+  }
+  .idea-panel.open{ max-height: 620px; }
+  .idea-panel ul{
+    margin:0 0 14px; padding:0;
+    list-style:none;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .idea-panel li{
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    line-height:1.55;
+    color: var(--text);
+  }
+  .idea-panel.noon li{ background: var(--noon-soft); }
+  .idea-panel.evening li{ background: var(--evening-soft); }
+  .idea-panel li b{ font-weight:600; }
+  .idea-panel.noon li b{ color: var(--noon-deep); }
+  .idea-panel.evening li b{ color: var(--evening-deep); }
+  .idea-group-title{
+    font-size: 12px;
+    color: var(--text-soft);
+    margin: 2px 0 -2px;
+  }
+
+  /* ---------- notify card ---------- */
+  .notify-card{
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 18px;
+    padding: 20px;
+    text-align:center;
+    box-shadow: 0 6px 18px var(--shadow);
+  }
+  .notify-card h2{
+    font-family:'Noto Serif TC', serif;
+    font-size: 16.5px;
+    margin: 0 0 8px;
+    font-weight:600;
+  }
+  .notify-card p{
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height:1.6;
+    margin: 0 0 16px;
+  }
+  .notify-btn{
+    font-family:'Noto Sans TC',sans-serif;
+    font-size: 14px;
+    font-weight:500;
+    color: #fff;
+    background: var(--evening-deep);
+    border:none;
+    border-radius: 999px;
+    padding: 10px 26px;
+    cursor:pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+  }
+  .notify-btn:active{ transform: scale(0.97); }
+  .notify-btn[disabled]{ opacity: 0.55; cursor:default; }
+  .notify-status{
+    margin-top: 12px !important;
+    font-size: 12.5px !important;
+    color: var(--evening-deep) !important;
+  }
+
+  /* ---------- history / month summary card ---------- */
+  .history-card{
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 18px;
+    padding: 24px 20px 20px;
+    margin-top: 18px;
+    box-shadow: 0 6px 18px var(--shadow);
+    text-align:center;
+  }
+  .month-summary{
+    border-radius: 16px;
+    padding: 26px 20px 22px;
+    background: var(--surface);
+    background-image: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.5), transparent 50%),
+                       radial-gradient(circle at 85% 90%, rgba(255,255,255,0.3), transparent 45%);
+  }
+  .ms-label{
+    font-size: 13px;
+    color: var(--text-soft);
+    letter-spacing: 0.04em;
+    margin: 0 0 6px;
+  }
+  .ms-pct-wrap{
+    font-family: 'Noto Serif TC', serif;
+    font-weight:700;
+    color: var(--evening-deep);
+    line-height:1;
+    margin-bottom: 12px;
+  }
+  .ms-pct{ font-size: 58px; }
+  .ms-pct-sign{ font-size: 26px; margin-left: 2px; }
+  .ms-message{
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16.5px;
+    font-weight:600;
+    color: var(--text);
+    margin: 0 0 16px;
+    line-height:1.6;
+  }
+  .ms-icons{
+    display:flex; justify-content:center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .ms-icon{
+    width: 9px; height:9px;
+    border-radius: 50%;
+  }
+  .ms-icon.morning{ background: var(--morning); }
+  .ms-icon.noon{ background: var(--noon); }
+  .ms-icon.evening{ background: var(--evening); }
+  .ms-sub{
+    font-size: 12px;
+    color: var(--text-soft);
+    margin:0;
+  }
+  .saved-image-wrap{
+    display:none;
+    margin-top: 16px;
+    text-align:center;
+  }
+  .saved-image-wrap img{
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px var(--shadow);
+  }
+  .history-avg{
+    font-size: 12.5px;
+    color: var(--text-soft);
+    margin: 10px 0 0;
+  }
+
+  .footnote{
+    text-align:center;
+    font-size: 11.5px;
+    color: var(--text-soft);
+    margin-top: 18px;
+    line-height:1.7;
+    padding: 0 12px;
+  }
+
+  /* ---------- 9:16 分享卡片（離屏渲染，供 html2canvas 擷取） ---------- */
+  .share-card{
+    display:none;
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 540px;
+    height: 960px;
+    box-sizing: border-box;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding: 70px 56px;
+    background: linear-gradient(165deg, #F2ECE1 0%, #E7DECE 55%, #DFD3BF 100%);
+    font-family: 'Noto Sans TC', sans-serif;
+    text-align:center;
+  }
+  .share-card.rendering{ display:flex; }
+  .sc-month{
+    font-family:'Noto Serif TC', serif;
+    font-size: 22px;
+    color: var(--text-soft);
+    letter-spacing: 0.05em;
+    margin: 0 0 22px;
+  }
+  .sc-pct-wrap{
+    font-family:'Noto Serif TC', serif;
+    font-weight:700;
+    color: var(--evening-deep);
+    line-height:1;
+    margin-bottom: 34px;
+  }
+  .sc-pct{ font-size: 156px; }
+  .sc-pct-sign{ font-size: 62px; margin-left: 4px; }
+  .sc-message{
+    font-family:'Noto Serif TC', serif;
+    font-weight:600;
+    font-size: 34px;
+    color: var(--text);
+    line-height:1.65;
+    margin: 0 0 34px;
+    max-width: 420px;
+  }
+  .sc-icons{
+    display:flex; justify-content:center; gap: 18px;
+    margin-bottom: 30px;
+  }
+  .sc-icon{ width: 16px; height:16px; border-radius: 50%; }
+  .sc-icon.morning{ background: var(--morning); }
+  .sc-icon.noon{ background: var(--noon); }
+  .sc-icon.evening{ background: var(--evening); }
+  .sc-sub{
+    font-size: 21px;
+    color: var(--text-soft);
+    margin: 0 0 60px;
+  }
+  .sc-tagline{
+    position:absolute;
+    bottom: 56px;
+    font-size: 17px;
+    color: var(--text-soft);
+    letter-spacing: 0.08em;
+    margin:0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <p class="date" id="dateLabel"></p>
+    <h1>今天，也把自己照顧好</h1>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 100 100">
+        <circle class="ring-track" cx="50" cy="50" r="44"></circle>
+        <circle class="ring-progress" id="ringProgress" cx="50" cy="50" r="44"
+                stroke-dasharray="0 276"></circle>
+      </svg>
+      <div class="ring-label">
+        <div class="pct"><span id="pctNum">0</span><span>%</span></div>
+        <span class="of"><span id="doneCount">0</span> / <span id="totalCount">8</span> 項完成</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="block" data-period="morning">
+    <div class="block-head">
+      <div class="block-head-left">
+        <span class="block-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+        </span>
+        <div>
+          <h2>喚醒身體</h2>
+          <span class="period-tag">早上</span>
+        </div>
+      </div>
+    </div>
+    <ul class="checklist" id="list-morning"></ul>
+  </section>
+
+  <section class="block" data-period="noon">
+    <div class="block-head">
+      <div class="block-head-left">
+        <span class="block-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.7" fill="currentColor" stroke="none"/><path d="M12 8v5l-3 7M12 13l3.5 2 2.5-1.5M12 13l-4 1.5"/></svg>
+        </span>
+        <div>
+          <h2 id="noonTitle">起身，出走覓食</h2>
+          <span class="period-tag">中午</span>
+        </div>
+      </div>
+    </div>
+    <ul class="checklist" id="list-noon"></ul>
+    <button class="idea-toggle noon" id="ideaToggleLunch" aria-expanded="false">
+      看看可以買什麼
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="idea-panel noon" id="ideaPanelLunch">
+      <ul>
+        <li><b>自助餐／便當店　</b>兩份蔬菜＋一份瘦肉或魚（去皮雞胸、鯛魚、鮭魚）＋半碗飯，避開勾芡與油炸</li>
+        <li><b>超商　</b>茶葉蛋或雞胸肉條＋地瓜或關東煮（蘿蔔、蒟蒻、海帶）＋無糖豆漿</li>
+        <li><b>沙拉店　</b>主餐沙拉＋雞胸或鮭魚，醬料另外附，選油醋或和風</li>
+        <li><b>麵店　</b>湯麵取代乾麵或滷味拼盤，先吃燙青菜</li>
+        <li><b>飯糰／三明治　</b>五穀飯糰或蔬菜蛋沙拉三明治，醬少一點</li>
+        <li><b>下雨天外送　</b>選沙拉、烤雞、湯品類，避開炸物、勾芡與含糖飲料</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" data-period="evening">
+    <div class="block-head">
+      <div class="block-head-left">
+        <span class="block-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 119.5 4a6.8 6.8 0 0010.5 10.5z"/></svg>
+        </span>
+        <div>
+          <h2>好好收尾</h2>
+          <span class="period-tag">晚上</span>
+        </div>
+      </div>
+    </div>
+    <ul class="checklist" id="list-evening"></ul>
+  </section>
+
+  <section class="notify-card">
+    <h2>23:00 提醒</h2>
+    <p>開啟後，若晚上 11 點清單還沒打勾完，這個頁面會跳出提醒。<br>需要保持這個分頁開著，通知才能送出。</p>
+    <button class="notify-btn" id="notifyBtn">開啟提醒</button>
+    <p class="notify-status" id="notifyStatus"></p>
+  </section>
+
+  <section class="history-card">
+    <div class="month-summary" id="monthSummaryCard">
+      <p class="ms-label" id="msLabel">本月回顧</p>
+      <div class="ms-pct-wrap">
+        <span class="ms-pct" id="msPctNum">–</span><span class="ms-pct-sign">%</span>
+      </div>
+      <p class="ms-message" id="msMessage">還沒有這個月的紀錄</p>
+      <div class="ms-icons">
+        <span class="ms-icon morning"></span>
+        <span class="ms-icon noon"></span>
+        <span class="ms-icon evening"></span>
+      </div>
+      <p class="ms-sub" id="msSub"></p>
+    </div>
+    <button class="notify-btn" id="saveImageBtn">儲存本月回顧圖片</button>
+    <div class="saved-image-wrap" id="savedImageWrap">
+      <img id="savedImageImg" alt="本月回顧圖片">
+      <p class="history-avg">長按圖片即可儲存到相簿</p>
+    </div>
+  </section>
+
+  <p class="footnote">每日項目會在過完午夜後自動重新開始。下雨天／非運動日時，對應的項目還是留在畫面上，只是先不列入今天的總項數，勾了一樣算數。</p>
+</div>
+
+<div class="share-card" id="shareCard">
+  <p class="sc-month" id="scMonth">2026年9月</p>
+  <div class="sc-pct-wrap">
+    <span class="sc-pct" id="scPctNum">–</span><span class="sc-pct-sign">%</span>
+  </div>
+  <p class="sc-message" id="scMessage">還沒有這個月的紀錄</p>
+  <div class="sc-icons">
+    <span class="sc-icon morning"></span>
+    <span class="sc-icon noon"></span>
+    <span class="sc-icon evening"></span>
+  </div>
+  <p class="sc-sub" id="scSub"></p>
+  <p class="sc-tagline">今天，也把自己照顧好</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// 每天的項目；noon-1 和 evening-1（運動）有各自的手動開關可以先不列入今天的總項數
+const DAILY_ITEMS = [
+  { id: 'morning-1', period: 'morning', label: '擦護手霜' },
+  { id: 'morning-2', period: 'morning', label: '吃益生菌' },
+  { id: 'noon-1',    period: 'noon',    label: '午餐出去走走買，不訂公司餐', optional: 'rain' },
+  { id: 'noon-2',    period: 'noon',    label: '飲食控制' },
+  { id: 'evening-1', period: 'evening', label: '運動', optional: 'exercise' },
+  { id: 'evening-2', period: 'evening', label: '洗頭髮' },
+  { id: 'evening-3', period: 'evening', label: '擦臉部乳液' },
+  { id: 'evening-4', period: 'evening', label: '擦身體乳液' },
+  { id: 'evening-5', period: 'evening', label: '擦護手霜' },
+  { id: 'evening-6', period: 'evening', label: '穿美腿襪' },
+];
+
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
+
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function dateFromKey(key){
+  const [y,m,d] = key.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function formatDateLabel(){
+  const d = new Date();
+  const weekdays = ['週日','週一','週二','週三','週四','週五','週六'];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日．${weekdays[d.getDay()]}`;
+}
+
+let state = {};
+let rainToday = false;
+let exerciseSkipToday = false;
+let notifyEnabled = false;
+let notifiedToday = false;
+let historyLoaded = false;
+
+async function loadJSON(key, fallback){
+  try{
+    const res = await window.storage.get(key, false);
+    return res ? JSON.parse(res.value) : fallback;
+  }catch(e){ return fallback; }
+}
+async function saveJSON(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), false); }
+  catch(e){ console.error('儲存失敗', e); }
+}
+
+async function loadState(){ return await loadJSON('checklist:' + todayKey(), {}); }
+async function saveState(){ await saveJSON('checklist:' + todayKey(), state); }
+
+function computeStats(dayState, dayRain, daySkip){
+  const counted = DAILY_ITEMS.filter(it => {
+    if (it.optional === 'rain' && dayRain && !dayState[it.id]) return false;
+    if (it.optional === 'exercise' && daySkip && !dayState[it.id]) return false;
+    return true;
+  });
+  const total = counted.length;
+  const done = counted.filter(it => dayState[it.id]).length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  return { total, done, pct };
+}
+
+function itemCountsToday(it){
+  if (it.optional === 'rain' && rainToday && !state[it.id]) return false;
+  if (it.optional === 'exercise' && exerciseSkipToday && !state[it.id]) return false;
+  return true;
+}
+
+const EXERCISE_IDEAS = `
+  <div class="exercise-extra">
+    <button class="idea-toggle evening nested" id="ideaToggleExercise" aria-expanded="false">
+      看看可以做什麼運動
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="idea-panel evening nested" id="ideaPanelExercise">
+      <p class="idea-group-title">小腹</p>
+      <ul>
+        <li><b>棒式　</b>手肘撐地，身體維持一直線，撐 20～30 秒</li>
+        <li><b>捲腹　</b>躺姿，肩胛離地收小腹，15 下 x 2 組</li>
+        <li><b>仰臥抬腿　</b>躺姿雙腳併攏抬起放下，15 下</li>
+      </ul>
+      <p class="idea-group-title">大腿</p>
+      <ul>
+        <li><b>假胯寬　</b>側躺或站姿抬腿，感受外側大腿發力，每邊 15 下</li>
+        <li><b>深蹲　</b>雙腳與肩同寬，臀部往後坐再站起，15 下</li>
+        <li><b>弓步蹲　</b>前後跨步下蹲，每邊 10 下</li>
+      </ul>
+      <p class="idea-group-title">手臂</p>
+      <ul>
+        <li><b>舉礦泉水彎舉　</b>雙手各拿一瓶水，手肘固定往上彎舉，15 下</li>
+        <li><b>礦泉水肩推　</b>水瓶舉高過頭再放下，12 下</li>
+        <li><b>椅子撐體　</b>手撐椅緣，身體下沉再撐起，10 下</li>
+      </ul>
+    </div>
+  </div>`;
+
+const RAIN_PILL = `
+  <button class="pill-toggle noon inline" id="rainToggle" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16a4 4 0 010-8 5 5 0 019.6-1.5A4 4 0 0118 16H7z"/><path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2"/></svg>
+    <span>今天下雨</span>
+  </button>`;
+
+const EXERCISE_SKIP_PILL = `
+  <button class="pill-toggle evening inline" id="exerciseSkipToggle" type="button">
+    <span>今天非運動日</span>
+  </button>`;
+
+function renderLists(){
+  ['morning','noon','evening'].forEach(period => {
+    const ul = document.getElementById('list-' + period);
+    ul.innerHTML = '';
+    DAILY_ITEMS.filter(it => it.period === period).forEach(it => {
+      const li = document.createElement('li');
+      const checked = !!state[it.id];
+      const pill = it.id === 'noon-1' ? RAIN_PILL : (it.id === 'evening-1' ? EXERCISE_SKIP_PILL : '');
+      const textId = (it.id === 'noon-1' || it.id === 'evening-1') ? ` id="text-${it.id}"` : '';
+      li.innerHTML = `
+        <div class="item-row">
+          <label class="item-label">
+            <input type="checkbox" data-id="${it.id}" ${checked ? 'checked' : ''}>
+            <span class="box">${CHECK_SVG}</span>
+            <span class="item-text"${textId}>${it.label}</span>
+          </label>${pill}
+        </div>${it.id === 'evening-1' ? EXERCISE_IDEAS : ''}`;
+      ul.appendChild(li);
+    });
+  });
+
+  document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', async (e) => {
+      state[e.target.dataset.id] = e.target.checked;
+      await saveState();
+      updateProgress();
+    });
+  });
+
+  setupToggle('ideaToggleExercise', 'ideaPanelExercise');
+  wireRainToggle();
+  wireExerciseSkipToggle();
+  applySkipVisuals();
+}
+
+function updateProgress(){
+  const counted = DAILY_ITEMS.filter(itemCountsToday);
+  const total = counted.length;
+  const done = counted.filter(it => state[it.id]).length;
+
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('pctNum').textContent = pct;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+
+  const circumference = 2 * Math.PI * 44;
+  const ratio = total > 0 ? done / total : 0;
+  const ring = document.getElementById('ringProgress');
+  ring.setAttribute('stroke-dasharray', `${circumference * ratio} ${circumference}`);
+
+  let color = 'var(--morning-deep)';
+  if (ratio === 1) color = 'var(--evening-deep)';
+  else if (ratio >= 0.5) color = 'var(--noon-deep)';
+  ring.style.stroke = color;
+}
+
+function setupToggle(btnId, panelId){
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  btn.addEventListener('click', () => {
+    const open = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+}
+
+function applySkipVisuals(){
+  const rainText = document.getElementById('text-noon-1');
+  if (rainText) rainText.classList.toggle('skip-line', rainToday);
+  const exerciseText = document.getElementById('text-evening-1');
+  if (exerciseText) exerciseText.classList.toggle('skip-line', exerciseSkipToday);
+
+  applyItemDisabled('noon-1', rainToday);
+  applyItemDisabled('evening-1', exerciseSkipToday);
+}
+
+function applyItemDisabled(id, disabled){
+  const cb = document.querySelector(`.checklist input[data-id="${id}"]`);
+  if (!cb) return;
+  cb.disabled = disabled;
+  const label = cb.closest('.item-label');
+  if (label) label.classList.toggle('is-disabled', disabled);
+  if (disabled && cb.checked) {
+    cb.checked = false;
+    state[id] = false;
+    saveState();
+  }
+}
+
+function wireRainToggle(){
+  const btn = document.getElementById('rainToggle');
+  if (!btn) return;
+  btn.classList.toggle('active', rainToday);
+  btn.addEventListener('click', async () => {
+    rainToday = !rainToday;
+    btn.classList.toggle('active', rainToday);
+    await saveJSON('checklist:rain:' + todayKey(), rainToday);
+    applySkipVisuals();
+    updateProgress();
+  });
+}
+
+async function loadRainState(){
+  rainToday = await loadJSON('checklist:rain:' + todayKey(), false);
+}
+
+function wireExerciseSkipToggle(){
+  const btn = document.getElementById('exerciseSkipToggle');
+  if (!btn) return;
+  btn.classList.toggle('active', exerciseSkipToday);
+  btn.addEventListener('click', async () => {
+    exerciseSkipToday = !exerciseSkipToday;
+    btn.classList.toggle('active', exerciseSkipToday);
+    await saveJSON('checklist:exercise-skip:' + todayKey(), exerciseSkipToday);
+    applySkipVisuals();
+    updateProgress();
+  });
+}
+
+async function loadExerciseSkipState(){
+  exerciseSkipToday = await loadJSON('checklist:exercise-skip:' + todayKey(), false);
+}
+
+/* ---------- 本月回顧 ---------- */
+function messageForPct(pct){
+  if (pct >= 90) return '太厲害了，這個月把自己照顧得很好';
+  if (pct >= 70) return '做得很好，這個節奏繼續保持';
+  if (pct >= 50) return '有在進步，慢慢來就好';
+  return '沒關係，新的一天重新開始就好';
+}
+
+async function loadMonthSummary(){
+  const now = new Date();
+  const monthPrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-`;
+  const monthLabel = `${now.getFullYear()}年${now.getMonth()+1}月．本月回顧`;
+  document.getElementById('msLabel').textContent = monthLabel;
+  document.getElementById('scMonth').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
+
+  let keys = [];
+  try{
+    const res = await window.storage.list('checklist:', false);
+    keys = (res && res.keys) ? res.keys : [];
+  }catch(e){ keys = []; }
+
+  const dateRe = /^checklist:(\d{4}-\d{2}-\d{2})$/;
+  const dates = keys
+    .map(k => { const m = dateRe.exec(k); return m ? m[1] : null; })
+    .filter(d => d && d.startsWith(monthPrefix))
+    .sort();
+
+  const pctEl = document.getElementById('msPctNum');
+  const msgEl = document.getElementById('msMessage');
+  const subEl = document.getElementById('msSub');
+  const scPctEl = document.getElementById('scPctNum');
+  const scMsgEl = document.getElementById('scMessage');
+  const scSubEl = document.getElementById('scSub');
+
+  if (dates.length === 0){
+    pctEl.textContent = '–';
+    msgEl.textContent = '還沒有這個月的紀錄，從今天開始吧';
+    subEl.textContent = '';
+    scPctEl.textContent = '–';
+    scMsgEl.textContent = '還沒有這個月的紀錄，從今天開始吧';
+    scSubEl.textContent = '';
+    return;
+  }
+
+  let sumPct = 0;
+  for (const d of dates){
+    const dayState = await loadJSON('checklist:' + d, {});
+    const dayRain = await loadJSON('checklist:rain:' + d, false);
+    const daySkip = await loadJSON('checklist:exercise-skip:' + d, false);
+    sumPct += computeStats(dayState, dayRain, daySkip).pct;
+  }
+  const avgPct = Math.round(sumPct / dates.length);
+  const message = messageForPct(avgPct);
+  const sub = `這個月已經有 ${dates.length} 天使用了這份清單`;
+
+  pctEl.textContent = avgPct;
+  msgEl.textContent = message;
+  subEl.textContent = sub;
+
+  scPctEl.textContent = avgPct;
+  scMsgEl.textContent = message;
+  scSubEl.textContent = sub;
+}
+
+async function saveMonthImage(){
+  const btn = document.getElementById('saveImageBtn');
+  const card = document.getElementById('shareCard');
+  if (typeof html2canvas === 'undefined') {
+    alert('圖片功能載入失敗，請重新整理頁面再試一次');
+    return;
+  }
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '圖片產生中…';
+  try{
+    if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+    card.classList.add('rendering');
+    let canvas;
+    try{
+      canvas = await html2canvas(card, {
+        backgroundColor: null,
+        scale: 2,
+        width: 540,
+        height: 960,
+        windowWidth: 540,
+        windowHeight: 960
+      });
+    } finally {
+      card.classList.remove('rendering');
+    }
+    const dataUrl = canvas.toDataURL('image/png');
+
+    const wrap = document.getElementById('savedImageWrap');
+    const img = document.getElementById('savedImageImg');
+    img.src = dataUrl;
+    wrap.style.display = 'block';
+
+    // 先試著用手機原生的分享面板，裡面通常會有「儲存圖片」選項，比長按更直接
+    let sharedNatively = false;
+    try{
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (blob && navigator.canShare) {
+        const file = new File([blob], `本月回顧-${todayKey()}.png`, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: '本月回顧' });
+          sharedNatively = true;
+        }
+      }
+    }catch(e){ /* 使用者取消分享，或此環境不支援，改用下方長按方式 */ }
+
+    if (!sharedNatively) {
+      try{
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `本月回顧-${todayKey()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }catch(e){ /* 手機上若無法直接下載，下方仍會顯示圖片供長按儲存 */ }
+    }
+  }catch(e){
+    console.error(e);
+    alert('圖片產生失敗，請稍後再試');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+function setupSaveImage(){
+  document.getElementById('saveImageBtn').addEventListener('click', saveMonthImage);
+}
+
+/* ---------- 23:00 提醒 ---------- */
+function updateNotifyStatus(){
+  const statusEl = document.getElementById('notifyStatus');
+  const btn = document.getElementById('notifyBtn');
+  if (typeof Notification === 'undefined') {
+    statusEl.textContent = '這個瀏覽器不支援通知功能';
+    btn.disabled = true;
+    return;
+  }
+  if (Notification.permission === 'denied') {
+    statusEl.textContent = '通知權限已被封鎖，請到瀏覽器設定重新開啟';
+    btn.textContent = '開啟提醒';
+    return;
+  }
+  if (notifyEnabled && Notification.permission === 'granted') {
+    statusEl.textContent = '提醒已開啟，記得讓分頁保持開著';
+    btn.textContent = '提醒已開啟';
+  } else {
+    statusEl.textContent = '';
+    btn.textContent = '開啟提醒';
+  }
+}
+
+async function setupNotify(){
+  const btn = document.getElementById('notifyBtn');
+  notifyEnabled = await loadJSON('checklist:notify-enabled', false);
+  notifiedToday = await loadJSON('checklist:notified:' + todayKey(), false);
+  updateNotifyStatus();
+
+  btn.addEventListener('click', async () => {
+    if (typeof Notification === 'undefined') return;
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      notifyEnabled = true;
+      await saveJSON('checklist:notify-enabled', true);
+    }
+    updateNotifyStatus();
+  });
+
+  setInterval(checkTime, 30000);
+  checkTime();
+}
+
+async function checkTime(){
+  if (!notifyEnabled || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  const now = new Date();
+  if (now.getHours() !== 23) return;
+  if (notifiedToday) return;
+
+  const counted = DAILY_ITEMS.filter(itemCountsToday);
+  const remaining = counted.filter(it => !state[it.id]).length;
+
+  if (remaining > 0) {
+    new Notification('今天的清單還沒打勾完喔', {
+      body: `還有 ${remaining} 項還沒完成，趁睡前補完吧`
+    });
+    notifiedToday = true;
+    await saveJSON('checklist:notified:' + todayKey(), true);
+  }
+}
+
+(async function init(){
+  document.getElementById('dateLabel').textContent = formatDateLabel();
+  state = await loadState();
+  await loadRainState();
+  await loadExerciseSkipState();
+  renderLists();
+  updateProgress();
+  setupToggle('ideaToggleLunch', 'ideaPanelLunch');
+  setupNotify();
+  setupSaveImage();
+  loadMonthSummary();
+})();
+</script>
+</body>
+</html>
