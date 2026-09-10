@@ -384,6 +384,125 @@
     padding: 0 12px;
   }
 
+  /* ---------- 月曆 ---------- */
+  .calendar-panel{
+    max-height: 0;
+    overflow:hidden;
+    transition: max-height 0.35s ease;
+  }
+  .calendar-panel.open{ max-height: 620px; }
+  .cal-nav{
+    display:flex; align-items:center; justify-content:space-between;
+    margin: 14px 0 10px;
+  }
+  .cal-nav-btn{
+    background: var(--surface-border);
+    color: var(--text);
+    border:none;
+    width: 30px; height:30px;
+    border-radius: 50%;
+    font-size: 16px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cal-nav-btn:disabled{ opacity:0.35; cursor:default; }
+  .cal-month-label{
+    font-family:'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight:600;
+    color: var(--text);
+  }
+  .cal-weekdays{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align:center;
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .cal-cell{
+    position:relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 3px;
+    font-size: 12.5px;
+    color: var(--text);
+    cursor:pointer;
+    padding:0;
+    font-family:'Noto Sans TC', sans-serif;
+  }
+  .cal-cell.empty{ visibility:hidden; cursor:default; }
+  .cal-cell.future{ opacity: 0.35; cursor:default; }
+  .cal-cell.today{ border-color: var(--evening-deep); font-weight:600; }
+  .cal-dot{ width:6px; height:6px; border-radius:50%; background:transparent; }
+  .cal-dot.full{ background: var(--evening-deep); }
+  .cal-dot.mid{ background: var(--noon-deep); }
+  .cal-dot.low{ background: var(--morning-deep); }
+  .cal-dot.none{ background: var(--surface-border); }
+  .cal-hint{
+    font-size: 11.5px;
+    color: var(--text-soft);
+    text-align:center;
+    margin: 12px 0 2px;
+  }
+
+  .day-modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(71,64,58,0.45);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index: 1000;
+  }
+  .day-modal-overlay.open{ display:flex; }
+  .day-modal-sheet{
+    background: var(--surface);
+    width: 100%;
+    max-width: 520px;
+    max-height: 82vh;
+    overflow-y: auto;
+    border-radius: 22px 22px 0 0;
+    padding: 20px 20px 30px;
+    box-sizing: border-box;
+  }
+  .day-modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+    position: sticky; top:0;
+    background: var(--surface);
+    padding-bottom: 6px;
+  }
+  .day-modal-head h2{
+    font-family:'Noto Serif TC', serif;
+    font-size: 18px;
+    margin:0;
+  }
+  .day-modal-close{
+    background: var(--surface-border);
+    border:none;
+    width: 30px; height:30px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor:pointer;
+    color: var(--text);
+  }
+  .modal-period{ margin-bottom: 10px; }
+  .modal-period-title{
+    font-size: 12px;
+    color: var(--text-soft);
+    margin: 0 0 2px;
+  }
+
   /* ---------- 9:16 分享卡片（離屏渲染，供 html2canvas 擷取） ---------- */
   .share-card{
     display:none;
@@ -549,12 +668,44 @@
       </div>
       <p class="ms-sub" id="msSub"></p>
     </div>
-    <button class="notify-btn" id="saveImageBtn">儲存本月回顧圖片</button>
+    <button class="notify-btn" id="saveImageBtn" style="margin-top:16px;">儲存本月回顧圖片</button>
     <div class="saved-image-wrap" id="savedImageWrap">
       <img id="savedImageImg" alt="本月回顧圖片">
-      <p class="history-avg">長按圖片即可儲存到相簿</p>
+      <p class="notify-status" style="color: var(--text-soft) !important;">長按圖片即可儲存到相簿</p>
     </div>
   </section>
+
+  <section class="history-card">
+    <div class="history-head">
+      <h2>月曆</h2>
+      <button class="idea-toggle evening" id="calendarToggle" aria-expanded="false">
+        展開月曆
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+    <div class="calendar-panel" id="calendarPanel">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="calPrev" type="button" aria-label="上個月">‹</button>
+        <span class="cal-month-label" id="calMonthLabel">2026年9月</span>
+        <button class="cal-nav-btn" id="calNext" type="button" aria-label="下個月">›</button>
+      </div>
+      <div class="cal-weekdays">
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <p class="cal-hint">點任一天可以查看或修改當天的紀錄</p>
+    </div>
+  </section>
+
+  <div class="day-modal-overlay" id="dayModalOverlay">
+    <div class="day-modal-sheet">
+      <div class="day-modal-head">
+        <h2 id="modalDateLabel">9月8日</h2>
+        <button class="day-modal-close" id="modalCloseBtn" type="button" aria-label="關閉">✕</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
 
   <p class="footnote">每日項目會在過完午夜後自動重新開始。下雨天／非運動日時，對應的項目還是留在畫面上，只是先不列入今天的總項數，勾了一樣算數。</p>
 </div>
@@ -1002,6 +1153,223 @@ async function checkTime(){
   }
 }
 
+/* ---------- 月曆 ---------- */
+let calYear, calMonth;
+let calendarLoaded = false;
+let modalDateKey = null;
+let modalDayState = {};
+let modalDayRain = false;
+let modalDaySkip = false;
+
+function pad2(n){ return String(n).padStart(2, '0'); }
+function makeDateKey(y, m, d){ return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
+
+function updateCalNav(){
+  const now = new Date();
+  const nextBtn = document.getElementById('calNext');
+  const atCurrentMonth = (calYear === now.getFullYear() && calMonth === now.getMonth());
+  nextBtn.disabled = atCurrentMonth;
+}
+
+async function renderCalendar(){
+  const grid = document.getElementById('calGrid');
+  document.getElementById('calMonthLabel').textContent = `${calYear}年${calMonth + 1}月`;
+  updateCalNav();
+
+  const firstWeekday = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = todayKey();
+
+  grid.innerHTML = '<p class="history-loading">讀取中…</p>';
+
+  const cellsHtml = [];
+  for (let i = 0; i < firstWeekday; i++){
+    cellsHtml.push('<div class="cal-cell empty"></div>');
+  }
+
+  for (let d = 1; d <= daysInMonth; d++){
+    const dateKey = makeDateKey(calYear, calMonth, d);
+    const isFuture = dateKey > todayStr;
+    const isToday = dateKey === todayStr;
+    let dotClass = 'none';
+
+    if (!isFuture){
+      const dayState = await loadJSON('checklist:' + dateKey, null);
+      if (dayState !== null){
+        const dayRain = await loadJSON('checklist:rain:' + dateKey, false);
+        const daySkip = await loadJSON('checklist:exercise-skip:' + dateKey, false);
+        const stats = computeStats(dayState, dayRain, daySkip);
+        if (stats.total > 0){
+          if (stats.pct === 100) dotClass = 'full';
+          else if (stats.pct >= 50) dotClass = 'mid';
+          else dotClass = 'low';
+        }
+      }
+    }
+
+    let cls = 'cal-cell';
+    if (isFuture) cls += ' future';
+    if (isToday) cls += ' today';
+
+    cellsHtml.push(`
+      <button class="${cls}" data-date="${dateKey}" type="button" ${isFuture ? 'disabled' : ''}>
+        <span>${d}</span>
+        <span class="cal-dot ${dotClass}"></span>
+      </button>`);
+  }
+
+  grid.innerHTML = cellsHtml.join('');
+
+  grid.querySelectorAll('.cal-cell:not(.empty):not(.future)').forEach(btn => {
+    btn.addEventListener('click', () => openDayModal(btn.dataset.date));
+  });
+}
+
+function applyModalDisabled(id, disabled){
+  const cb = document.querySelector(`#modalBody input[data-id="${id}"]`);
+  if (!cb) return;
+  cb.disabled = disabled;
+  const label = cb.closest('.item-label');
+  if (label) label.classList.toggle('is-disabled', disabled);
+  if (disabled && cb.checked){
+    cb.checked = false;
+    modalDayState[id] = false;
+    saveJSON('checklist:' + modalDateKey, modalDayState);
+  }
+}
+
+function renderModalBody(){
+  const body = document.getElementById('modalBody');
+  const periods = [
+    { key: 'morning', title: '早上' },
+    { key: 'noon', title: '中午' },
+    { key: 'evening', title: '晚上' }
+  ];
+
+  let html = '';
+  periods.forEach(p => {
+    html += `<div class="modal-period"><p class="modal-period-title">${p.title}</p><ul class="checklist">`;
+    DAILY_ITEMS.filter(it => it.period === p.key).forEach(it => {
+      const checked = !!modalDayState[it.id];
+      let pill = '';
+      if (it.id === 'noon-1') pill = '<button class="pill-toggle noon inline" id="modalRainToggle" type="button"><span>今天下雨</span></button>';
+      if (it.id === 'evening-1') pill = '<button class="pill-toggle evening inline" id="modalExerciseSkipToggle" type="button"><span>今天非運動日</span></button>';
+      const textId = (it.id === 'noon-1' || it.id === 'evening-1') ? ` id="modal-text-${it.id}"` : '';
+      html += `
+        <li><div class="item-row">
+          <label class="item-label">
+            <input type="checkbox" data-id="${it.id}" ${checked ? 'checked' : ''}>
+            <span class="box">${CHECK_SVG}</span>
+            <span class="item-text"${textId}>${it.label}</span>
+          </label>${pill}
+        </div></li>`;
+    });
+    html += `</ul></div>`;
+  });
+  body.innerHTML = html;
+
+  body.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', async (e) => {
+      modalDayState[e.target.dataset.id] = e.target.checked;
+      await saveJSON('checklist:' + modalDateKey, modalDayState);
+    });
+  });
+
+  const rainBtn = document.getElementById('modalRainToggle');
+  if (rainBtn){
+    rainBtn.classList.toggle('active', modalDayRain);
+    applyModalDisabled('noon-1', modalDayRain);
+    const rainText = document.getElementById('modal-text-noon-1');
+    if (rainText) rainText.classList.toggle('skip-line', modalDayRain);
+    rainBtn.addEventListener('click', async () => {
+      modalDayRain = !modalDayRain;
+      rainBtn.classList.toggle('active', modalDayRain);
+      await saveJSON('checklist:rain:' + modalDateKey, modalDayRain);
+      applyModalDisabled('noon-1', modalDayRain);
+      if (rainText) rainText.classList.toggle('skip-line', modalDayRain);
+    });
+  }
+
+  const exBtn = document.getElementById('modalExerciseSkipToggle');
+  if (exBtn){
+    exBtn.classList.toggle('active', modalDaySkip);
+    applyModalDisabled('evening-1', modalDaySkip);
+    const exText = document.getElementById('modal-text-evening-1');
+    if (exText) exText.classList.toggle('skip-line', modalDaySkip);
+    exBtn.addEventListener('click', async () => {
+      modalDaySkip = !modalDaySkip;
+      exBtn.classList.toggle('active', modalDaySkip);
+      await saveJSON('checklist:exercise-skip:' + modalDateKey, modalDaySkip);
+      applyModalDisabled('evening-1', modalDaySkip);
+      if (exText) exText.classList.toggle('skip-line', modalDaySkip);
+    });
+  }
+}
+
+async function openDayModal(dateKey){
+  modalDateKey = dateKey;
+  modalDayState = await loadJSON('checklist:' + dateKey, {});
+  modalDayRain = await loadJSON('checklist:rain:' + dateKey, false);
+  modalDaySkip = await loadJSON('checklist:exercise-skip:' + dateKey, false);
+
+  const dt = dateFromKey(dateKey);
+  const weekdays = ['週日','週一','週二','週三','週四','週五','週六'];
+  document.getElementById('modalDateLabel').textContent = `${dt.getMonth() + 1}月${dt.getDate()}日．${weekdays[dt.getDay()]}`;
+
+  renderModalBody();
+  document.getElementById('dayModalOverlay').classList.add('open');
+}
+
+async function closeDayModal(){
+  document.getElementById('dayModalOverlay').classList.remove('open');
+
+  if (modalDateKey === todayKey()){
+    state = modalDayState;
+    rainToday = modalDayRain;
+    exerciseSkipToday = modalDaySkip;
+    renderLists();
+    updateProgress();
+  }
+  renderCalendar();
+  historyLoaded = false;
+  loadMonthSummary();
+}
+
+function setupCalendar(){
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+
+  const toggleBtn = document.getElementById('calendarToggle');
+  const panel = document.getElementById('calendarPanel');
+  toggleBtn.addEventListener('click', async () => {
+    const open = panel.classList.toggle('open');
+    toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && !calendarLoaded){
+      calendarLoaded = true;
+      await renderCalendar();
+    }
+  });
+
+  document.getElementById('calPrev').addEventListener('click', () => {
+    calMonth--;
+    if (calMonth < 0){ calMonth = 11; calYear--; }
+    renderCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    const nowD = new Date();
+    if (calYear === nowD.getFullYear() && calMonth === nowD.getMonth()) return;
+    calMonth++;
+    if (calMonth > 11){ calMonth = 0; calYear++; }
+    renderCalendar();
+  });
+
+  document.getElementById('modalCloseBtn').addEventListener('click', closeDayModal);
+  document.getElementById('dayModalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'dayModalOverlay') closeDayModal();
+  });
+}
+
 (async function init(){
   document.getElementById('dateLabel').textContent = formatDateLabel();
   state = await loadState();
@@ -1013,6 +1381,7 @@ async function checkTime(){
   setupNotify();
   setupSaveImage();
   loadMonthSummary();
+  setupCalendar();
 })();
 </script>
 </body>
