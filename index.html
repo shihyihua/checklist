@@ -196,6 +196,7 @@
     transform: scale(0.5);
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
+  input:checked + .box{ background: var(--evening-deep); border-color: var(--evening-deep); }
   .block[data-period="morning"] input:checked + .box{ background: var(--morning); border-color: var(--morning); }
   .block[data-period="noon"] input:checked + .box{ background: var(--noon); border-color: var(--noon); }
   .block[data-period="evening"] input:checked + .box{ background: var(--evening); border-color: var(--evening); }
