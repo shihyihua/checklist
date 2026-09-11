@@ -691,7 +691,7 @@
         <li><b>沙拉店　</b>主餐沙拉＋雞胸或鮭魚，醬料另外附，選油醋或和風</li>
         <li><b>麵店　</b>湯麵取代乾麵或滷味拼盤，先吃燙青菜</li>
         <li><b>飯糰／三明治　</b>五穀飯糰或蔬菜蛋沙拉三明治，醬少一點</li>
-        <li><b>下雨天外送　</b>選沙拉、烤雞、湯品類，避開炸物、勾芡與含糖飲料</li>
+        <li><b>不出去外送　</b>選沙拉、烤雞、湯品類，避開炸物、勾芡與含糖飲料</li>
       </ul>
     </div>
   </section>
@@ -790,7 +790,7 @@
     </div>
   </div>
 
-  <p class="footnote">每日項目會在過完午夜後自動重新開始。下雨天／非運動日時，對應的項目還是留在畫面上，只是先不列入今天的總項數，勾了一樣算數。</p>
+  <p class="footnote">每日項目會在過完午夜後自動重新開始。今天不出去／非運動日時，對應的項目還是留在畫面上，只是先不列入今天的總項數，勾了一樣算數。</p>
 </div>
 
 <div class="share-card" id="shareCard">
@@ -921,8 +921,7 @@ const EXERCISE_IDEAS = `
 
 const RAIN_PILL = `
   <button class="pill-toggle noon inline" id="rainToggle" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16a4 4 0 010-8 5 5 0 019.6-1.5A4 4 0 0118 16H7z"/><path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2"/></svg>
-    <span>今天下雨</span>
+    <span>今天不出去</span>
   </button>`;
 
 const EXERCISE_SKIP_PILL = `
@@ -1342,7 +1341,7 @@ function renderModalBody(){
     DAILY_ITEMS.filter(it => it.period === p.key).forEach(it => {
       const checked = !!modalDayState[it.id];
       let pill = '';
-      if (it.id === 'noon-1') pill = '<button class="pill-toggle noon inline" id="modalRainToggle" type="button"><span>今天下雨</span></button>';
+      if (it.id === 'noon-1') pill = '<button class="pill-toggle noon inline" id="modalRainToggle" type="button"><span>今天不出去</span></button>';
       if (it.id === 'evening-1') pill = '<button class="pill-toggle evening inline" id="modalExerciseSkipToggle" type="button"><span>今天非運動日</span></button>';
       const textId = (it.id === 'noon-1' || it.id === 'evening-1') ? ` id="modal-text-${it.id}"` : '';
       html += `
