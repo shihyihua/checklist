@@ -57,6 +57,7 @@
 
   /* ---------- Hero ---------- */
   .hero{
+    position: relative;
     text-align:center;
     padding: 6px 6px 28px;
   }
@@ -497,6 +498,66 @@
     cursor:pointer;
     color: var(--text);
   }
+  .day-modal-head-actions{
+    display:flex; align-items:center; gap:8px;
+  }
+  .modal-save-btn{
+    background: var(--evening-soft);
+    color: var(--evening-deep);
+    border:none;
+    width: 34px; height:34px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: transform 0.15s ease;
+  }
+  .modal-save-btn:active{ transform: scale(0.9); }
+  .modal-save-btn svg{ width:16px; height:16px; }
+
+  .bottom-save-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 8px;
+    margin: 8px 0 22px;
+  }
+  .save-fab{
+    width: 52px; height:52px;
+    border-radius: 50%;
+    background: var(--evening-deep);
+    color: #fff;
+    border:none;
+    box-shadow: 0 6px 16px rgba(71,64,58,0.25);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: transform 0.15s ease;
+  }
+  .save-fab:active{ transform: scale(0.92); }
+  .save-fab svg{ width:22px; height:22px; }
+  .bottom-save-label{
+    font-size: 12px;
+    color: var(--text-soft);
+    margin:0;
+  }
+
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 92px;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 1100;
+    white-space: nowrap;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
   .modal-period{ margin-bottom: 10px; }
   .modal-period-title{
     font-size: 12px;
@@ -589,6 +650,8 @@
     </div>
   </header>
 
+  <div class="toast" id="toastMsg"></div>
+
   <section class="block" data-period="morning">
     <div class="block-head">
       <div class="block-head-left">
@@ -646,6 +709,16 @@
       </div>
     </div>
     <ul class="checklist" id="list-evening"></ul>
+    <div class="bottom-save-wrap">
+      <button class="save-fab" id="todaySaveBtn" type="button" aria-label="儲存今天的紀錄">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/>
+          <path d="M8 4v5h7V4"/>
+          <path d="M8 20v-7h8v7"/>
+        </svg>
+      </button>
+      <p class="bottom-save-label">儲存今天的紀錄</p>
+    </div>
   </section>
 
   <section class="notify-card">
@@ -702,7 +775,16 @@
     <div class="day-modal-sheet">
       <div class="day-modal-head">
         <h2 id="modalDateLabel">9月8日</h2>
-        <button class="day-modal-close" id="modalCloseBtn" type="button" aria-label="關閉">✕</button>
+        <div class="day-modal-head-actions">
+          <button class="modal-save-btn" id="modalSaveBtn" type="button" aria-label="儲存這天的紀錄">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/>
+              <path d="M8 4v5h7V4"/>
+              <path d="M8 20v-7h8v7"/>
+            </svg>
+          </button>
+          <button class="day-modal-close" id="modalCloseBtn" type="button" aria-label="關閉">✕</button>
+        </div>
       </div>
       <div id="modalBody"></div>
     </div>
@@ -769,13 +851,23 @@ let historyLoaded = false;
 
 async function loadJSON(key, fallback){
   try{
-    const res = await window.storage.get(key, false);
-    return res ? JSON.parse(res.value) : fallback;
+    const raw = localStorage.getItem(key);
+    return raw !== null ? JSON.parse(raw) : fallback;
   }catch(e){ return fallback; }
 }
 async function saveJSON(key, value){
-  try{ await window.storage.set(key, JSON.stringify(value), false); }
+  try{ localStorage.setItem(key, JSON.stringify(value)); }
   catch(e){ console.error('儲存失敗', e); }
+}
+function listStorageKeys(prefix){
+  const keys = [];
+  try{
+    for (let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if (k && k.startsWith(prefix)) keys.push(k);
+    }
+  }catch(e){ /* ignore */ }
+  return keys;
 }
 
 async function loadState(){ return await loadJSON('checklist:' + todayKey(), {}); }
@@ -976,10 +1068,7 @@ async function loadMonthSummary(){
   document.getElementById('scMonth').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
 
   let keys = [];
-  try{
-    const res = await window.storage.list('checklist:', false);
-    keys = (res && res.keys) ? res.keys : [];
-  }catch(e){ keys = []; }
+  try{ keys = listStorageKeys('checklist:'); }catch(e){ keys = []; }
 
   const dateRe = /^checklist:(\d{4}-\d{2}-\d{2})$/;
   const dates = keys
@@ -1366,8 +1455,31 @@ function setupCalendar(){
   });
 
   document.getElementById('modalCloseBtn').addEventListener('click', closeDayModal);
+  document.getElementById('modalSaveBtn').addEventListener('click', async () => {
+    await saveJSON('checklist:' + modalDateKey, modalDayState);
+    await saveJSON('checklist:rain:' + modalDateKey, modalDayRain);
+    await saveJSON('checklist:exercise-skip:' + modalDateKey, modalDaySkip);
+    showToast('這天的紀錄已儲存');
+  });
   document.getElementById('dayModalOverlay').addEventListener('click', (e) => {
     if (e.target.id === 'dayModalOverlay') closeDayModal();
+  });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toastMsg');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => { t.classList.remove('show'); }, 1600);
+}
+
+function setupTodaySave(){
+  document.getElementById('todaySaveBtn').addEventListener('click', async () => {
+    await saveState();
+    await saveJSON('checklist:rain:' + todayKey(), rainToday);
+    await saveJSON('checklist:exercise-skip:' + todayKey(), exerciseSkipToday);
+    showToast('今天的紀錄已儲存');
   });
 }
 
@@ -1383,6 +1495,7 @@ function setupCalendar(){
   setupSaveImage();
   loadMonthSummary();
   setupCalendar();
+  setupTodaySave();
 })();
 </script>
 </body>
